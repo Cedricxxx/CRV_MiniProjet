@@ -32,7 +32,7 @@ spec:
     - protocol: TCP
       port: 8080
       targetPort: 8080
-  type: LoadBalancer # Utilisez NodePort pour l'exposition externe si nécessaire, sinon ClusterIP pour une communication interne
+  type: ClusterIP # Utilisez NodePort pour l'exposition externe si nécessaire, sinon ClusterIP pour une communication interne
   
 ---
 apiVersion: autoscaling/v1
