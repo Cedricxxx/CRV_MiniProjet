@@ -62,4 +62,3 @@ Pour déployer et tester les services, procédez comme suit :
    ./delete.sh
    ```
 
-Ce guide vous aidera à mettre en place et tester votre environnement en utilisant Minikube, Prometheus, et Grafana.
