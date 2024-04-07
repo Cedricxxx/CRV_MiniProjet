@@ -50,3 +50,17 @@ spec:
       port: 9121
       targetPort: 9121
   type: ClusterIP
+---
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: redis-hpa
+  namespace: default
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: redis-deployment
+  minReplicas: 2
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 50
