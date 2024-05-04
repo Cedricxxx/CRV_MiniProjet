@@ -1,4 +1,3 @@
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -13,29 +12,37 @@ spec:
         app: redis
     spec:
       containers:
-        - name: redis
-          image: redis:latest
-          ports:
-            - containerPort: 6379
-        - name: redis-exporter
-          image: oliver006/redis_exporter
-          ports:
-            - containerPort: 9121
-          env:
-            - name: REDIS_ADDR
-              value: "redis://localhost:6379"
+      - image: redis:latest
+        name: redis
+        ports:
+        - containerPort: 6379
+        resources: &id001
+          limits:
+            cpu: '1'
+            memory: 512Mi
+          requests:
+            cpu: 500m
+            memory: 256Mi
+      - env:
+        - name: REDIS_ADDR
+          value: redis://localhost:6379
+        image: oliver006/redis_exporter
+        name: redis-exporter
+        ports:
+        - containerPort: 9121
+        resources: *id001
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: redis-service
 spec:
+  ports:
+  - port: 6379
+    protocol: TCP
+    targetPort: 6379
   selector:
     app: redis
-  ports:
-    - protocol: TCP
-      port: 6379
-      targetPort: 6379
   type: ClusterIP
 ---
 apiVersion: v1
@@ -43,12 +50,12 @@ kind: Service
 metadata:
   name: redis-exporter-service
 spec:
+  ports:
+  - port: 9121
+    protocol: TCP
+    targetPort: 9121
   selector:
     app: redis
-  ports:
-    - protocol: TCP
-      port: 9121
-      targetPort: 9121
   type: ClusterIP
 ---
 apiVersion: autoscaling/v1
@@ -57,10 +64,10 @@ metadata:
   name: redis-hpa
   namespace: default
 spec:
+  maxReplicas: 10
+  minReplicas: 1
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
     name: redis-deployment
-  minReplicas: 3
-  maxReplicas: 10
   targetCPUUtilizationPercentage: 50
