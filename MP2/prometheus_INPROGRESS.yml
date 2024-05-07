@@ -1,4 +1,4 @@
-
+#Version d'essai non fonctionnelle car la métrique kubernetes n'est pas reconnue
 apiVersion: apps/v1
 kind: Deployment
 metadata:
